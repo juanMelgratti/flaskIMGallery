@@ -1,0 +1,23 @@
+{%extends 'base.html'%}
+{%block title%}
+Edit
+{%endblock%}
+{%block header%}
+<h1>Edit Post</h1>
+{%endblock%}
+{%block main%}
+    <h1>title: {{post.title}}</h1>
+    <h1>post author: {{post.author}}</h1>
+    <h1>post content: {{post.content}}</h1>
+    
+    <hr>
+    <form action="/posts/edit/{{post.id}}" method="POST">
+        title: <input type="text" name="title" id="title">
+        <hr>
+        post: <input type="text" name="content" id="content">
+        <input type="submit" value="Save">
+    </form>
+
+
+{%endblock%}
+<!--es importante en el formulario ver el link que hay en action="link"-->

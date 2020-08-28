@@ -1,0 +1,27 @@
+{%extends 'base.html'%}
+{%block title%}
+Post
+{%endblock%}
+{%block header%}
+<h1>Create new post</h1>
+{%endblock%}
+{%block main%}
+<form action="/posts" method="POST">
+    Title: <input type="text" name="title" id="title">
+    <hr>
+    Description: <input type="text" name="content" id="content">
+    <input type="submit" value="Post">
+</form>
+    <a href="/logout">Logout</a>
+    {%for post in posts%}
+        <h3>by post author: {{post.author}}</h3>
+        <h4>post title: {{post.title}}</h4>
+        <h5>post content: {{post.content}}</h5>
+        <h6>post released: {{post.date}}</h6>
+        <a href="/posts/delete/{{post.id}}">Delete</a>
+        <a href="/posts/edit/{{post.id}}">Edit</a>
+    {% endfor %}
+   
+
+
+{%endblock%}
