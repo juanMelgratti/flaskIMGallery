@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{%block title%}
+    Sign Up 
+{%endblock%}
+{%block main%}
+<h1>Username already exist</h1>
+    <form method="post" action="{{ url_for('signup') }}">
+        <p>Username: <input type="text" name="username"></p>
+        <p>Password: <input type="password" name="password"></p>
+        <input type="submit" value="Sign Up">
+    </form>
+{%endblock%}

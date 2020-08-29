@@ -1,0 +1,11 @@
+{%extends 'base.html'%}
+{%block title%}
+Home Page
+{%endblock%}
+{%block main%}
+<form action="/login" method="POST">
+<h2>Username: <input type="text" name="username" id="username"></h2>
+<h2>Password: <input type="password" name="password" id="password"></h2>
+<h3><input type="submit" name="Submit"></h3>
+</form>
+{%endblock%}

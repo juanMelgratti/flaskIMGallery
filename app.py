@@ -5,8 +5,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 import random
-
-
 import os
 
 UPLOAD_FOLDER = os.path.abspath('./static/img')
@@ -21,6 +19,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///post.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 app.secret_key = 'dev'
+
 
 
 class BlogPost(db.Model):
@@ -40,7 +39,11 @@ class Users(db.Model):
     username = db.Column(db.String(30), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template('home.html')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -52,20 +55,27 @@ def login():
         return redirect('/signup')
     elif "username" in session:
         return redirect('/posts')
-    return render_template("index.html")
+    return render_template("login.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    
     if not "username" in session:
-        #acá va un ef que pregunte si el usuario existe
-            if request.method == "POST":
+        if request.method == "POST":
+            if request.form["password"] != "":
                 hashed_pw = generate_password_hash(request.form["password"], method="sha256")
                 new_user = Users(username=request.form["username"], password=hashed_pw)
-                db.session.add(new_user)
-                db.session.commit()
-                return redirect('/login')
+                exist_username = db.session.query(Users.username).filter_by(username=request.form['username']).scalar() is not None
+                if not exist_username:
+                    db.session.add(new_user)
+                    db.session.commit()
+                    return redirect('/login')
+                else:
+                    return render_template('signuperror.html')
+            else:
+                return render_template("signuperror2.html")
 
-            return render_template("signup.html")
+        return render_template("signup.html")
     else:
         return redirect("/posts")
 
@@ -104,6 +114,7 @@ def post():
 @app.route('/posts/delete/<int:id>')
 def delete(id):
     post = BlogPost.query.get_or_404(id)
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.img))
     db.session.delete(post)
     db.session.commit()
     return redirect('/posts')
