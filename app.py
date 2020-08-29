@@ -1,14 +1,27 @@
-from flask import Flask, render_template, request, session, escape, redirect, url_for
+from flask import Flask, render_template, request, session, escape, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash 
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+
+import random
+
 
 import os
 
+UPLOAD_FOLDER = os.path.abspath('./static/img')
+ALLOWED_EXTENSIONS = set(["png", "jpg", "jpge"])
+
+def allowed_file(filename):
+
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///post.db' 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 app.secret_key = 'dev'
+
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,20 +29,16 @@ class BlogPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(50), nullable=False, default="N/A")
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    img = db.Column(db.Text, nullable=False)
+    
 
     def __repr__(self):
         return "post created " + str(self.id)
 
-class Image(db.Model):
-    img_id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.Integer)
-    image = db.Column(db.LargeBinary, nullable=False)
-
 class Users(db.Model):
     author_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), nullable=False)
+    username = db.Column(db.String(30), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
-
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
@@ -41,19 +50,24 @@ def login():
             return redirect('/posts')
             
         return redirect('/signup')
-
+    elif "username" in session:
+        return redirect('/posts')
     return render_template("index.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-    if request.method == "POST":
-        hashed_pw = generate_password_hash(request.form["password"], method="sha256")
-        new_user = Users(username=request.form["username"], password=hashed_pw)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect('/login')
+    if not "username" in session:
+        #acá va un ef que pregunte si el usuario existe
+            if request.method == "POST":
+                hashed_pw = generate_password_hash(request.form["password"], method="sha256")
+                new_user = Users(username=request.form["username"], password=hashed_pw)
+                db.session.add(new_user)
+                db.session.commit()
+                return redirect('/login')
 
-    return render_template("signup.html")
+            return render_template("signup.html")
+    else:
+        return redirect("/posts")
 
 @app.route("/logout")
 def logout():
@@ -62,18 +76,26 @@ def logout():
 
 @app.route("/posts", methods=["GET", "POST"])
 def post():
+    n = random.random()
     if "username" in session:
+        user = session["username"]
         if request.method == "POST":
-            post_title = request.form["title"]
-            post_content = request.form["content"]
-            user = session["username"]
-            new_post = BlogPost(title=post_title, content=post_content, author=user)
-            db.session.add(new_post)
-            db.session.commit()
+            if not "file" in request.files:
+                return "No file part in the form."
+            f = request.files["file"]
+            if f.filename == "":
+                return "No file selected."
+            if f and allowed_file(f.filename):
+                filename = user + str(n) + secure_filename(f.filename)
+                f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+                post_title = request.form["title"]
+                post_content = request.form["content"] 
+                new_post = BlogPost(title=post_title, content=post_content, author=user, img=filename)
+                db.session.add(new_post)
+                db.session.commit()
             return redirect('/posts')
             
         else:
-            user = session["username"]
             all_posts = BlogPost.query.filter_by(author=user)
             return render_template("post.html", posts=all_posts)
             #no lo renderiza mágicamente. Los post abajo están en orden de posteo hecho por un for
@@ -98,9 +120,8 @@ def edit(id):
         post = BlogPost.query.get_or_404(id)   
         return render_template('edit.html', post=post)
 
-@app.route('/upload_img', methods=['GET', 'POST'])
-def upload():
-    pass
+
+
 
 
 

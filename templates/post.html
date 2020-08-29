@@ -6,14 +6,22 @@ Post
 <h1>Create new post</h1>
 {%endblock%}
 {%block main%}
-<form action="/posts" method="POST">
-    Title: <input type="text" name="title" id="title">
+<form action="/posts" method="POST" enctype="multipart/form-data">
+    Title: <input type="text" name="title" id="title" >
     <hr>
     Description: <input type="text" name="content" id="content">
+    IMG <input type="file" name="file">
     <input type="submit" value="Post">
+    
 </form>
+
+    
     <a href="/logout">Logout</a>
+<div id="posts">
     {%for post in posts%}
+        <div class="img">
+        <img src="/static/img/{{post.img}}" alt="">
+        </div>
         <h3>by post author: {{post.author}}</h3>
         <h4>post title: {{post.title}}</h4>
         <h5>post content: {{post.content}}</h5>
@@ -21,6 +29,8 @@ Post
         <a href="/posts/delete/{{post.id}}">Delete</a>
         <a href="/posts/edit/{{post.id}}">Edit</a>
     {% endfor %}
+</div>  
+
    
 
 
