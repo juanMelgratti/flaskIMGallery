@@ -42,6 +42,8 @@ class Users(db.Model):
 @app.route("/")
 @app.route("/home")
 def home():
+    if "username" in session:
+        return redirect('/posts')
     return render_template('home.html')
 
 @app.route("/login", methods=["GET", "POST"])

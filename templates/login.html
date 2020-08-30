@@ -1,11 +1,23 @@
-{%extends 'base.html'%}
-{%block title%}
-Home Page
-{%endblock%}
+{% extends "base.html" %}
+    {%block head%}
+    <link rel="stylesheet" href="../static/css/login.css">
+    {%endblock%}
+    {%block title%}Login{%endblock%}
 {%block main%}
-<form action="/login" method="POST">
-<h2>Username: <input type="text" name="username" id="username"></h2>
-<h2>Password: <input type="password" name="password" id="password"></h2>
-<h3><input type="submit" name="Submit"></h3>
-</form>
+    <div class="container">
+        <div class="box">
+            <div class="inputs">
+                <form action="/login" method="POST">
+                Username: <h2><input type="text" name="username" id="username"></h2>
+                Password: <h2><input type="password" name="password" id="password"></h2>
+                <div class="inputs-checkbox"><input type="checkbox">Remember Me</div>
+                <a href="#">Forgot my password</a>
+            </div>
+            <div class="button">
+                <input type="submit" name="Submit" value="Submit">
+            </div>
+            </div>
+                </form>
+        </div>
+    </div>
 {%endblock%}
