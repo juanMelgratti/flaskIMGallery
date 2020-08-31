@@ -1,12 +1,26 @@
 {% extends "base.html" %}
+{%block head%}
+    <link rel="stylesheet" href="../static/css/signup-error.css">
+{%endblock%}
 {%block title%}
     Sign Up 
 {%endblock%}
 {%block main%}
-<h1>Password must be not null</h1>
+
+<div class="container">
+    <div class="white-box">
+    <h3>All fields must be correctly complete</h1>
+    <div class="container-inputs">
     <form method="post" action="{{ url_for('signup') }}">
         <p>Username: <input type="text" name="username"></p>
         <p>Password: <input type="password" name="password"></p>
+        <p>Confirm Password: <input type="password" name="confirm"></p>
+        <p>Secrect Word: <input type="text" name="secret_word" maxlength="10"></p>
+    </div>
+    <div class="submit">
         <input type="submit" value="Sign Up">
+    </div>
     </form>
+    </div>
+</div>
 {%endblock%}

@@ -11,7 +11,6 @@ UPLOAD_FOLDER = os.path.abspath('./static/img')
 ALLOWED_EXTENSIONS = set(["png", "jpg", "jpge"])
 
 def allowed_file(filename):
-
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
@@ -20,8 +19,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 app.secret_key = 'dev'
 
-
-
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
@@ -29,15 +26,12 @@ class BlogPost(db.Model):
     author = db.Column(db.String(50), nullable=False, default="N/A")
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     img = db.Column(db.Text, nullable=False)
-    
-
-    def __repr__(self):
-        return "post created " + str(self.id)
 
 class Users(db.Model):
     author_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
+    secret_key = db.Column(db.String(10), nullable=False)
 
 @app.route("/")
 @app.route("/home")
@@ -59,14 +53,26 @@ def login():
         return redirect('/posts')
     return render_template("login.html")
 
+@app.route("/forgot-password", methods=["GET", "POST"])
+def recover_password():
+    if request.method == "POST":
+        user = Users.query.filter_by(username=request.form["username"]).first()
+        if user.secret_key == request.form['secret_key']:
+            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]):
+                hashed_pw = generate_password_hash(request.form["password"], method="sha256")
+                user.password = hashed_pw 
+                db.session.commit()
+                return "password changed"
+    return render_template('recover.html')
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     
     if not "username" in session:
         if request.method == "POST":
-            if request.form["password"] != "":
+            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and request.form["secret_word"] != "":
                 hashed_pw = generate_password_hash(request.form["password"], method="sha256")
-                new_user = Users(username=request.form["username"], password=hashed_pw)
+                new_user = Users(username=request.form["username"], password=hashed_pw, secret_key=request.form["secret_word"])
                 exist_username = db.session.query(Users.username).filter_by(username=request.form['username']).scalar() is not None
                 if not exist_username:
                     db.session.add(new_user)

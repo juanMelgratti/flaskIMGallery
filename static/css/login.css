@@ -41,13 +41,19 @@
     border: none;
     border-radius: 20px;
     width: 219px;
+    text-align: center;
 }
 
 .inputs-checkbox{
     display: flex;
     width: 220px;
     margin: auto;
+    cursor: pointer;
     
+}
+
+.inputs-checkbox input{
+    cursor: pointer;
 }
 
 .inputs a{
@@ -70,6 +76,7 @@
 .inputs a:hover{
     background-color: crimson;
     transition: 1.2s;
+    cursor: pointer;
 }
 
 .button input{
@@ -88,4 +95,5 @@
 .button input:hover{
     background-color: crimson;
     transition: 1.2s;
+    cursor: pointer;
 }

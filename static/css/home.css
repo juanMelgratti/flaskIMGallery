@@ -57,4 +57,5 @@
 .buttons a:hover{
     background-color: crimson;
     transition: .5s;
+    cursor: pointer;
 }

@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{%block head%}
+    <link rel="stylesheet" href="../static/css/recover.css">
+{%endblock%}
+{%block title%}
+    Recover Password 
+{%endblock%}
+{%block main%}
+<div class="container">
+    <div class="white-box">
+        <h3>Change Password</h1>
+        <div class="container-form">
+            <form action="/forgot-password" method="POST">
+            <h4>Username:</h4> <input type="text" name="username">
+            <h4>Secret Word: </h4><input type="text" name="secret_key" maxlength="10">
+            <h4>New Password: </h4><input type="password" name="password">
+            <h4>Confirm New Password:</h4> <input type="password" name="confirm">
+        </div>
+        <div class="button">
+            <input type="submit" value="Change Password">     
+        </div>
+        </form>
+</div>
+</div>
+
+{%endblock%}
