@@ -1,0 +1,167 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+.container{
+    display: block;
+    align-items: center;
+    justify-self: center;
+    width: 100%;
+    background-color: blue;
+    height: 420px;
+    position: relative; 
+}
+
+.checkbox{
+    position: relative;
+    top: 0;
+    text-align: center;
+    width: 100%;
+    height: 40px;
+    background-color: cyan;
+}
+
+.checkbox input{  
+    postion: absolute;
+    float: left;
+    margin-top: 12px;
+    width: 30px;
+    height: 30px;
+    display: none;
+}
+
+.container .title{
+    font-size: 20px;
+    text-align: center;
+}
+
+.container .title input{
+    border: none;
+    margin: 0;
+    height: 20px; 
+    
+}
+
+.container .des{
+    text-align: center;
+}
+
+.container .description{
+    display:flex;
+    font-size: 20px;
+    margin-top: 8px;
+    align-items: center;
+    justify-content: center;  
+}
+
+.container .description textarea{
+    display: block;
+    border: none;
+    width: 400px;
+    height: 150px;   
+}
+
+.container-buttons{
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+    margin-top: 10px;
+}
+
+.container-buttons input[type="submit"]{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.container-buttons label[for="submit"]{
+    display: block;
+    margin: 0 auto;
+    border: none;
+    width: 400px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid crimson;
+    text-align: center;
+    color: black;
+    margin-top: 8px;
+    padding-top: 3px;
+}
+
+.container-buttons label:hover{
+    background-color: crimson;
+    cursor: pointer;
+    transition: .7s;
+}
+
+.container-buttons input[type="file"]{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+    
+    }
+.container-buttons label[for="file"] {
+    margin-top: 10px;
+    display: inline-block;
+    background-color: transparent;
+    border: 1px solid crimson;
+    width: 400px;
+    height: 30px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 4px;
+
+    font-size: 15px;
+}
+
+.container-buttons label[for="file"]:hover{
+    background-color: crimson;
+    transition: .7s;
+    cursor: pointer;
+}
+
+#submit{
+    margin-top: 10px
+}
+
+.container-buttons a{
+    text-decoration: none;
+    display: inline-block;
+    background-color: transparent;
+    width: 400px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid crimson;
+    margin-top: 8px ;
+    color: black;
+    padding-top: 2px;
+}
+
+.container-buttons a:hover{
+    background-color: crimson;
+    transition: .7s;
+    cursor: pointer;
+}
+
+
+ 
+
+
+   
+
+
+
+
+
+
+
+

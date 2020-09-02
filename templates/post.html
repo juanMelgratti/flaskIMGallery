@@ -1,36 +1,56 @@
 {%extends 'base.html'%}
+{%block head%}
+<link rel="stylesheet" href="../static/css/posts.css">
+{%endblock%}
 {%block title%}
 Post
 {%endblock%}
 {%block header%}
-<h1>Create new post</h1>
+
 {%endblock%}
 {%block main%}
-<form action="/posts" method="POST" enctype="multipart/form-data">
-    Title: <input type="text" name="title" id="title" >
-    <hr>
-    Description: <input type="text" name="content" id="content">
-    IMG <input type="file" name="file">
-    <input type="submit" value="Post">
-    
-</form>
-
-    
-    <a href="/logout">Logout</a>
-<div id="posts">
-    {%for post in posts%}
-        <div class="img">
-        <img src="/static/img/{{post.img}}" alt="">
-        </div>
-        <h3>by post author: {{post.author}}</h3>
-        <h4>post title: {{post.title}}</h4>
-        <h5>post content: {{post.content}}</h5>
-        <h6>post released: {{post.date}}</h6>
-        <a href="/posts/delete/{{post.id}}">Delete</a>
-        <a href="/posts/edit/{{post.id}}">Edit</a>
-    {% endfor %}
+ 
+<div class="post-container">
+    <div id="posts">
+        {%for post in posts%}
+            <div class="img">
+            <img src="/static/img/{{post.img}}" alt="">
+            </div>
+            <h3>by post author: {{post.author}}</h3>
+            <h4>post title: {{post.title}}</h4>
+            <h5>post content: {{post.content}}</h5>
+            <h6>post released: {{post.date}}</h6>
+            <a href="/posts/delete/{{post.id}}">Delete</a>
+            <a href="/posts/edit/{{post.id}}">Edit</a>
+        {% endfor %}
+    </div>  
 </div>  
 
+<div class="container">
+    <div class="checkbox">
+    <input type="checkbox">
+    <h1>Create new post</h1>
+    </div>  
+    <div class="title">
+    <form action="/posts" method="POST" enctype="multipart/form-data">
+        <h2>Title</h2> <input type="text" name="title" id="title" maxlength="30">
+    </div>
+    <div class="des">
+        <h2>Description</h2>
+    </div>
+    <div class="description">  
+        <textarea name="content" id="content"s rows="10" cols="30" ></textarea>
+    </div>
+    <div class="container-buttons">
+        <h3><label for="file">Search Image</label></h3>
+        <input type="file" name="file" id="file" >
+        <h3><label for="submit">Post</label></h3>
+        <input type="submit" value="Post" id="submit">
+        <h3><a href="/logout">Logout</a></h3>
+    </div>        
+    </form>
+</div>
+       
    
 
 
