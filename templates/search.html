@@ -1,0 +1,38 @@
+{%extends 'base.html'%}
+
+{%block head%}
+
+{%endblock%}
+
+{%block title%}
+Search
+{%endblock%}
+
+{%block header%}
+
+{%endblock%}
+
+{%block main%}
+<form action="/search" method="POST">
+    <input type="text" name="search" placeholder="Title or Author">
+    <input type="submit" value="search">
+</form>
+
+{%for post in posts%}
+    <h1>Title:</h1> {{post.title}}
+    <h1>Content:</h1> {{post.author}}
+    <h1>Author:</h1> {{post.author}}
+    <hr>
+    <img src="/static/img/{{post.img}}" alt="">
+{%endfor%}
+
+{%for post in title%}
+    <h1>Title:</h1> {{post.title}}
+    <h1>Content:</h1> {{post.author}}
+    <h1>Author:</h1> {{post.author}}
+    <hr>
+    <img src="/static/img/{{post.img}}" alt="">
+{%endfor%}
+
+
+{%endblock%}

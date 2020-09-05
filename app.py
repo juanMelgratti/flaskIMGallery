@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, escape, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, session, escape, redirect, url_for, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,16 +21,16 @@ app.secret_key = 'dev'
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
+    title = db.Column(db.String(25), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(50), nullable=False)
+    author = db.Column(db.String(30), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     img = db.Column(db.Text, nullable=False)
 
 class Users(db.Model):
     author_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(25), nullable=False)
     secret_key = db.Column(db.String(10), nullable=False)
 
 @app.route("/")
@@ -58,7 +58,7 @@ def recover_password():
     if request.method == "POST":
         user = Users.query.filter_by(username=request.form["username"]).first()
         if user.secret_key == request.form['secret_key']:
-            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]):
+            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and not " " in request.form["password"]:
                 hashed_pw = generate_password_hash(request.form["password"], method="sha256")
                 user.password = hashed_pw 
                 db.session.commit()
@@ -66,23 +66,24 @@ def recover_password():
     return render_template('recover.html')
 
 @app.route("/signup", methods=["GET", "POST"])
-def signup():
-    
+def signup():    
     if not "username" in session:
         if request.method == "POST":
-            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and request.form["secret_word"] != "":
-                hashed_pw = generate_password_hash(request.form["password"], method="sha256")
-                new_user = Users(username=request.form["username"], password=hashed_pw, secret_key=request.form["secret_word"])
-                exist_username = db.session.query(Users.username).filter_by(username=request.form['username']).scalar() is not None
-                if not exist_username:
-                    db.session.add(new_user)
-                    db.session.commit()
-                    return redirect('/login')
+            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and request.form["secret_word"] != "" and len(request.form["password"])<25:
+                if not " " in request.form["password"] and (not " " in request.form["secret_word"]) and len(request.form["secret_word"])<10: 
+                    hashed_pw = generate_password_hash(request.form["password"], method="sha256")
+                    new_user = Users(username=request.form["username"], password=hashed_pw, secret_key=request.form["secret_word"])
+                    exist_username = db.session.query(Users.username).filter_by(username=request.form['username']).scalar() is not None
+                    if not exist_username and len(request.form["username"])< 30:
+                        db.session.add(new_user)
+                        db.session.commit()
+                        return redirect('/login')
+                    else:
+                        return render_template('signuperror.html')
                 else:
-                    return render_template('signuperror.html')
+                    return render_template("signuperror2.html")
             else:
                 return render_template("signuperror2.html")
-
         return render_template("signup.html")
     else:
         return redirect("/posts")
@@ -103,7 +104,7 @@ def post():
             f = request.files["file"]
             if f.filename == "":
                 return "No file selected."
-            if f and allowed_file(f.filename):
+            if f and allowed_file(f.filename) and len(request.form["title"])<25:
                 filename = user + str(n) + secure_filename(f.filename)
                 f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
                 post_title = request.form["title"]
@@ -111,12 +112,10 @@ def post():
                 new_post = BlogPost(title=post_title, content=post_content, author=user, img=filename)
                 db.session.add(new_post)
                 db.session.commit()
-            return redirect('/posts')
-            
+            return redirect('/posts')       
         else:
             all_posts = BlogPost.query.filter_by(author=user)
             return render_template("post.html", posts=all_posts)
-            #no lo renderiza mágicamente. Los post abajo están en orden de posteo hecho por un for
     return "you must login first"
 
 @app.route('/posts/delete/<int:id>')
@@ -129,7 +128,7 @@ def delete(id):
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-    if request.method == 'POST':
+    if request.method == 'POST'and len(request.form["title"])<25:
         post = BlogPost.query.get_or_404(id)
         post.title = request.form['title']
         post.content = request.form['content']
@@ -139,6 +138,15 @@ def edit(id):
         post = BlogPost.query.get_or_404(id)   
         return render_template('edit.html', post=post)
 
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        user = request.form["search"]
+        title = request.form["search"]
+        user_posts = BlogPost.query.filter_by(author=user) 
+        title_posts = BlogPost.query.filter_by(title=title)
+        return render_template('search.html', posts=user_posts, title=title_posts)
+    return render_template('search.html')
 
 
 
