@@ -43,7 +43,7 @@
 .buttons a{
     display: inline-block;
     text-decoration: none;
-    width: 150px;
+    width: 100px;
     height: 40px;
     background-color: transparent;
     margin-top: 5px;
@@ -51,7 +51,7 @@
     text-align: center;
     padding: 7px;
     color: black;  
-    margin: 4px;
+    margin: 2px;
 }
 
 .buttons a:hover{

@@ -1,0 +1,9 @@
+*{
+    background-color: #222222;
+}
+
+.content{
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+}

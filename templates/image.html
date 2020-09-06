@@ -1,0 +1,14 @@
+{%extends 'base.html'%}
+{%block title%}
+{{img.author}} {{img.id}} Image
+{%endblock%}
+{%block head%}
+<link rel="stylesheet" href="/static/css/image.css">
+{%endblock%}
+{%block main%}
+<div class="content">
+    <div class="img">
+        <img src="/static/img/{{img.img}}" alt="">
+    </div>
+</div>
+{%endblock%}

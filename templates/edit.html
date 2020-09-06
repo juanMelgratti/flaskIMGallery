@@ -1,24 +1,77 @@
 {%extends 'base.html'%}
+{%block head%}
+<link rel="stylesheet" href="/static/css/edit.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{%endblock%}
 {%block title%}
-Edit
+Post
 {%endblock%}
 {%block header%}
-<h1>Edit Post</h1>
+<div class="head-content">
+    <div class="topnav" id="myTopnav">
+        <a href="/search" class="active">Search</a>
+        <a href="https://github.com/juanMelgratti?tab=repositories">Github</a>
+        <a href="#contact">Contact</a>
+        <a href="#about">About Me</a>
+        <a href="/logout">Logout</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
+</div>
 {%endblock%}
 {%block main%}
-    <h1>title: {{post.title}}</h1>
-    <h1>post author: {{post.author}}</h1>
-    <h1>post content: {{post.content}}</h1>
-    <img src="/static/img/{{post.img}}" alt="">
-    
-    <hr>
-    <form action="/posts/edit/{{post.id}}" method="POST">
-        title: <input type="text" name="title" id="title" value="25 Char Title">
-        <hr>
-        post: <input type="text" name="content" id="content">
-        <input type="submit" value="Save">
-    </form>
+<div class="container"> 
+  <div class="title">
+  <form action="/posts/edit/{{post.id}}" method="POST" enctype="multipart/form-data">
+      <h2>Title</h2> <input type="text" name="title" id="title" maxlength="25" placeholder="25 Char Title">
+  </div>
+  <div class="des">
+      <h2>Description</h2>
+  </div>
+  <div class="description">  
+      <textarea name="content" id="content"s rows="10" cols="30" maxlength="300" placeholder="Max 300 char description" ></textarea>
+  </div>
+  <div class="container-buttons">
+      <h3><label for="submit">Post</label></h3>
+      <input type="submit" value="Post" id="submit">
+  </div>        
+  </form>
+</div>
+
+<div class="post-container">
+    <div id="posts">
+          Title: {{post.title}}
+            <div class="img">
+            <img src="/static/img/{{post.img}}" alt="">
+            </div>
+            <div class="post-content">
+            By: {{post.author}}
+            
+            <div class="text">
+            {{post.content}}
+            </div>
+            Posted: {{post.date.strftime('%Y-%m-%d') }}
+            <div class="post-button">
+              <a href="/posts/delete/{{post.id}}">Delete</a>
+              <a href="/posts/image/{{post.id}}">Full Image</a>  
+            </div>          
+          </div>
+    </div> 
+
+</div>  
 
 
+
+<script>
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+</script>
 {%endblock%}
-<!--es importante en el formulario ver el link que hay en action="link"-->
+

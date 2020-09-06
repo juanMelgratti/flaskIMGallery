@@ -69,7 +69,7 @@ def recover_password():
 def signup():    
     if not "username" in session:
         if request.method == "POST":
-            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and request.form["secret_word"] != "" and len(request.form["password"])<25:
+            if request.form["password"] != "" and (request.form["password"] == request.form["confirm"]) and request.form["secret_word"] != "" and len(request.form["password"])<25 and request.form["username"] != "" and not " " in request.form["username"]:
                 if not " " in request.form["password"] and (not " " in request.form["secret_word"]) and len(request.form["secret_word"])<10: 
                     hashed_pw = generate_password_hash(request.form["password"], method="sha256")
                     new_user = Users(username=request.form["username"], password=hashed_pw, secret_key=request.form["secret_word"])
@@ -104,7 +104,7 @@ def post():
             f = request.files["file"]
             if f.filename == "":
                 return "No file selected."
-            if f and allowed_file(f.filename) and len(request.form["title"])<25:
+            if f and allowed_file(f.filename) and len(request.form["title"])<25 and len(request.form["content"])<300:
                 filename = user + str(n) + secure_filename(f.filename)
                 f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
                 post_title = request.form["title"]
@@ -128,27 +128,41 @@ def delete(id):
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-    if request.method == 'POST'and len(request.form["title"])<25:
-        post = BlogPost.query.get_or_404(id)
-        post.title = request.form['title']
-        post.content = request.form['content']
-        db.session.commit()
-        return redirect('/posts')
-    else: 
-        post = BlogPost.query.get_or_404(id)   
-        return render_template('edit.html', post=post)
+    post = BlogPost.query.get_or_404(id)
+    user = session["username"]
+    if "username" in session and user == post.author:
+        if request.method == 'POST'and len(request.form["title"])<25:
+            post.title = request.form['title']
+            post.content = request.form['content']
+            db.session.commit()
+            return redirect('/posts')
+        else: 
+            post = BlogPost.query.get_or_404(id)   
+            return render_template('edit.html', post=post)
+    else:
+        return redirect('/home')
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    if request.method == 'POST':
-        user = request.form["search"]
-        title = request.form["search"]
-        user_posts = BlogPost.query.filter_by(author=user) 
-        title_posts = BlogPost.query.filter_by(title=title)
-        return render_template('search.html', posts=user_posts, title=title_posts)
-    return render_template('search.html')
+    if "username" in session:
+        if request.method == 'POST':
+            post = request.form["search"]
+            user_posts = BlogPost.query.filter_by(author=post) 
+            title_posts = BlogPost.query.filter_by(title=post)
+            return render_template('search.html', posts=user_posts, title=title_posts)
+        return render_template('search.html')
+    else:
+        if request.method == 'POST':
+            post = request.form["search"]
+            user_posts = BlogPost.query.filter_by(author=post) 
+            title_posts = BlogPost.query.filter_by(title=post)
+            return render_template('search.html', posts=user_posts, title=title_posts)
+        return render_template('search2.html')
 
-
+@app.route('/posts/image/<int:id>', methods=['GET', 'POST'])
+def image(id):
+    img = BlogPost.query.get_or_404(id)
+    return render_template('image.html', img=img)
 
 
 
