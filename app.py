@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, escape, redirect, url_for, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -14,9 +15,16 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'mail@gmail.com'
+app.config['MAIL_PASSWORD'] = '********'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///post.db' 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-db = SQLAlchemy(app)
 app.secret_key = 'dev'
 
 class BlogPost(db.Model):
@@ -163,6 +171,19 @@ def search():
 def image(id):
     img = BlogPost.query.get_or_404(id)
     return render_template('image.html', img=img)
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        msg = Message('Hello ' + request.form['firstname'] + ' ' + request.form['lastname'], sender = 'senderflask@gmail.com', recipients = ['juanmelgrattimorales@gmail.com'])
+        msg.body = 'mail: ' + request.form['mail'] + request.form['subject'] 
+        mail.send(msg)
+        return 'mail sended'
+    return render_template('contact.html')
 
 
 

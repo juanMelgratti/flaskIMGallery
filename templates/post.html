@@ -11,9 +11,9 @@ Post
 <div class="head-content">
     <div class="topnav" id="myTopnav">
         <a href="/search" class="active">Search</a>
-        <a href="https://github.com/juanMelgratti?tab=repositories">Github</a>
-        <a href="#contact">Contact</a>
-        <a href="#about">About Me</a>
+        <a href="https://github.com/juanMelgratti?tab=repositories" target="_blank">Github</a>
+        <a href="/contact" target="_blank">Contact</a>
+        <a href="/about" target="_blank">About Me</a>
         <a href="/logout">Logout</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
           <i class="fa fa-bars"></i>
@@ -58,7 +58,7 @@ Post
             <div class="post-button">
               <a href="/posts/delete/{{post.id}}">Delete</a>
               <a href="/posts/edit/{{post.id}}">Edit</a>
-              <a href="/posts/image/{{post.id}}">Image</a>  
+              <a href="/posts/image/{{post.id}}">Full Image</a>  
             </div>          
           </div>
         {% endfor %}

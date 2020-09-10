@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {%block head%}
     <link rel="stylesheet" href="../static/css/signup-error.css">
-    <script src="../static/javascript/app.js"></script> 
-    <script src="/static/javascript/app.js"></script> 
 {%endblock%}
 {%block title%}
     Sign Up 
@@ -24,4 +22,11 @@
     </form>
     </div>
 </div>
+
+<script>
+    function myFunction() {
+      alert("Username must have a maximun of 30char, can not be a empty string and must not have spaces. Password must have a maximun of 25char, cant be an empty sytring and must not have spaces. The secret word cant have spaces and can not be an empty string.");
+    }
+    myFunction()
+</script>
 {%endblock%}
